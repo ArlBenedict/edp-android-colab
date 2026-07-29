@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.SubcomposeAsyncImage
 import com.example.prelimexam.ui.theme.PrelimexamTheme
 
 class MainActivity : ComponentActivity() {
@@ -81,13 +83,15 @@ fun ThemeSwitcher(isDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
 
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier) {
+    val profileImageUrl = "https://storage.googleapis.com/app-engine-preproduction-host-eu.appspot.com/b/app-engine-preproduction-host-eu.appspot.com/o/2347394982136066%2Fprofile_pic.jpg?GoogleAccessId=firebase-adminsdk-m1gvt%40app-engine-preproduction-host-eu.iam.gserviceaccount.com&Expires=1751328000&Signature=cM5G8R5XbVjYgLwYn%2B%2FZ%2Fv%2Fz%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B"
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 1. Circular avatar - initials placeholder
+        // 1. Circular avatar - AsyncImage with initials fallback
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -96,11 +100,31 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                 .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "AE",
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
+            SubcomposeAsyncImage(
+                model = profileImageUrl,
+                contentDescription = "Profile Picture",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                error = {
+                    // Fallback to initials if image fails to load
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "AE",
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                loading = {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(32.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             )
         }
 
