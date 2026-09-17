@@ -1,4 +1,4 @@
-package com.example.myapplication
+package edu.liceo.liceofieldkit
 
 import org.junit.Test
 
